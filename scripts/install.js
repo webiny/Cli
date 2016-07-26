@@ -1,5 +1,4 @@
 var fs = require('fs');
-
-console.log(process.env);
-
-//fs.createReadStream('').pipe(fs.createWriteStream('newLog.log'));
+var binaryPath = process.env.PWD + '/bin/webiny';
+var projectBinaryPath = process.env.PWD + '/../../webiny';
+fs.createReadStream(binaryPath).pipe(fs.createWriteStream(projectBinaryPath));

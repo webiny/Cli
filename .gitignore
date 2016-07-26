@@ -3,7 +3,6 @@ node_modules/*
 *.pydevproject
 .project
 .metadata
-bin/
 tmp/
 *.tmp
 *.bak
