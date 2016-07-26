@@ -1,13 +1,5 @@
-#################
-## WebinyPlatform
-#################
-.idea
+.idea/
 node_modules/*
-
-#################
-## Eclipse
-#################
-
 *.pydevproject
 .project
 .metadata
