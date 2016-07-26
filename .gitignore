@@ -94,7 +94,6 @@ DocProject/Help/html
 publish
 
 # Others
-[Bb]in
 [Oo]bj
 sql
 TestResults
@@ -136,7 +135,6 @@ Desktop.ini
 dist
 eggs
 parts
-bin
 var
 sdist
 develop-eggs
