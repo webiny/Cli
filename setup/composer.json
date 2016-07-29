@@ -1,0 +1,27 @@
+{
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Webiny/AppInstaller.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Webiny/Setup.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/Webiny/Core.git"
+        }
+    ],
+    "require": {
+        "webiny/app-installer": "dev-master",
+        "webiny/setup": "dev-master",
+        "webiny/login": "dev-master",
+        "webiny/core": "dev-master"
+    },
+    "config": {
+        "discard-changes": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

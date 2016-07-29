@@ -1,0 +1,7 @@
+Application:
+  Environment: production
+  AbsolutePath: ''
+  WebPath: ''
+  ApiPath: ''
+  Backend: admin
+  ApiTokenControl: true
