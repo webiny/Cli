@@ -1,6 +1,6 @@
 Application:
   Environment: production
-  AbsolutePath: ''
+  AbsolutePath: __DIR__/../../
   WebPath: ''
   ApiPath: ''
   Backend: admin
