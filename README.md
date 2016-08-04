@@ -1,11 +1,12 @@
-Webiny CLI
-------------
+Webiny
+---------
 
 This is a command line interface tool to manage your Webiny platform setup, run builds, watch code for changes and deploy
 your setup to remote servers.
 
 ## How to use
 ```
+mkdir myProject && cd myProject
 npm install webiny
 node webiny
 ```
