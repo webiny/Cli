@@ -1,4 +1,7 @@
+#! /usr/local/bin/node
 if (!process.env.PWD) {
     process.env.PWD = __dirname;
 }
-require('./../index').run();
+
+var webiny = require(__dirname + '/../index');
+webiny.run();
