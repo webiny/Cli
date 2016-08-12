@@ -1,5 +1,5 @@
 #! /usr/local/bin/node
-// uglifyjs -c --mangle=toplevel -o webiny.min.js webiny.js
+var version = '0.1.6';
 
 // Require packages
 var Q = require('q');
@@ -10,6 +10,9 @@ var menu = require('./lib/menu');
 
 module.exports = {
     run: function () {
+        utils.log('-----------------------');
+        utils.info('Webiny CLI ' + utils.chalk.cyan('v' + version));
+        utils.log('-----------------------');
         if (check.firstRun()) {
             utils.log('Checking requirements...');
             return Q.fcall(check.requirements).then(function () {
