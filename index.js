@@ -1,5 +1,4 @@
 #! /usr/local/bin/node
-var version = '0.1.6';
 
 // Require packages
 var Q = require('q');
@@ -7,6 +6,7 @@ var utils = require('./lib/utils');
 var check = require('./lib/check');
 var setup = require('./lib/setup');
 var menu = require('./lib/menu');
+var version = JSON.parse(utils.readFile(__dirname + '/package.json')).version;
 
 module.exports = {
     run: function () {
