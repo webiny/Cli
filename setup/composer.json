@@ -11,7 +11,6 @@
     ],
     "require": {
         "webiny/app-installer": "dev-master",
-        "webiny/login": "dev-master",
         "webiny/core": "dev-master"
     },
     "config": {
