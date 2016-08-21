@@ -1,9 +1,0 @@
-Application:
-  Environment: production
-  AbsolutePath: __DIR__/../../
-  WebPath: ''
-  ApiPath: ''
-  Backend: admin
-  ApiDispatchers:
-        CheckUserPermissions: true
-  ApiTokenControl: true
