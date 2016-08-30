@@ -3,8 +3,8 @@
 // Require packages
 var Q = require('q');
 var utils = require('./lib/utils');
-var check = require('./lib/check');
-var setup = require('./lib/setup');
+var check = require('./lib/actions/checkRequirements');
+var setup = require('./lib/actions/setup');
 var menu = require('./lib/menu');
 var version = JSON.parse(utils.readFile(__dirname + '/package.json')).version;
 

@@ -64,6 +64,7 @@
     "main-bower-files": "^2.11.0",
     "mocha": "^2.4.5",
     "moment": "^2.13.0",
+    "node-fetch": "^1.6.0",
     "node-sshclient": "^0.2.0",
     "q": "^1.1.2",
     "selenium-webdriver": "^2.53.2",
