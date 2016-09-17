@@ -60,6 +60,7 @@
     "moment": "^2.13.0",
     "node-fetch": "^1.6.0",
     "node-sshclient": "^0.2.0",
+    "password-generator": "^2.0.2",
     "selenium-webdriver": "^2.53.2",
     "through2": "^2.0.0"
   },
