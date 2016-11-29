@@ -2,7 +2,7 @@
   "author": "Pavel Denisjuk <pavel@webiny.com>",
   "name": "webiny",
   "description": "A CLI tool to setup Webiny project, build, watch, run tests and deploy your project to remote server",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "license": "MIT",
   "repository": {
     "type": "git",
