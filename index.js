@@ -10,7 +10,7 @@ var version = JSON.parse(utils.readFile(__dirname + '/package.json')).version;
 
 module.exports = {
     run: function () {
-        checkUpdates(version).then(function(){
+        checkUpdates(version).then(function () {
             utils.log('---------------------------------------------');
             utils.info('Webiny CLI ' + utils.chalk.cyan('v' + version));
             utils.log('---------------------------------------------');
@@ -44,6 +44,7 @@ module.exports = {
                 });
             } catch (err) {
                 utils.exclamation(err.message);
+                process.exit(1);
             }
         });
     }
