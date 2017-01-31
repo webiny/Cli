@@ -32,7 +32,7 @@ class Webiny {
         program.parse(process.argv);
 
         if (program.production) {
-            //program.buildVendors = true;
+            program.buildVendors = true;
         }
 
         if (program.task === 'develop' && program.production) {
@@ -101,11 +101,6 @@ class Webiny {
                         buildVendors: program.buildVendors,
                         apps: _.filter(this.getApps(), a => program.app.indexOf(a.name) > -1)
                     };
-
-                    // Remove all files from build folder
-                    buildConfig.apps.map(app => {
-                        fs.removeSync(utils.projectRoot('public_html') + '/build/' + process.env.NODE_ENV + '/' + app.path);
-                    });
 
                     const Build = require('./lib/scripts/build');
                     const build = new Build(this, buildConfig);

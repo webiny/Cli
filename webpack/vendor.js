@@ -43,7 +43,7 @@ module.exports = function (app) {
         entry: {},
         output: {
             path: outputPath,
-            filename: '[name].js',
+            filename: process.env.NODE_ENV === 'production' ? '[name]-[hash].js' : '[name].js',
             library: 'Webiny_' + bundleName + '_Vendor'
         },
         plugins: plugins,
