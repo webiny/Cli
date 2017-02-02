@@ -1,19 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
 const utils = require('../lib/utils');
+let externals = require('./externals');
 
 module.exports = function (app) {
+    const sharedResolve = require('./resolve')(app);
     const name = app.name;
     const bundleName = app.name.replace('.', '_');
     const context = utils.projectRoot(app.sourceFolder);
     const outputPath = path.resolve(utils.projectRoot(), 'public_html/build/' + process.env.NODE_ENV, app.path);
-
-    let externals = {
-        'react': 'React',
-        'react-dom': 'ReactDOM',
-        'jquery': '$',
-        'lodash': '_'
-    };
 
     const plugins = [
         new webpack.DefinePlugin({
@@ -66,11 +61,6 @@ module.exports = function (app) {
                 }
             ]
         },
-        resolve: {
-            modules: [
-                path.resolve(utils.projectRoot(), app.sourceFolder, './Assets/node_modules/'),
-                path.resolve(utils.projectRoot(), app.sourceFolder)
-            ]
-        }
+        resolve: sharedResolve
     };
 };

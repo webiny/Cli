@@ -4,12 +4,13 @@ node_modules/*
 .project
 .metadata
 tmp/
+test/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
-.classpath
+.classpathbitbu
 .settings/
 .loadpath
 
