@@ -101,14 +101,6 @@ module.exports = function (app) {
                     ]
                 },
                 {
-                    test: /\.woff2?$|\.ttf$|\.eot$|\.svg$/,
-                    loader: 'file-loader',
-                    options: {
-                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name].[ext]'
-                    }
-                },
-                {
                     test: /\.scss$/,
                     use: ExtractTextPlugin.extract({
                         fallbackLoader: 'style-loader',
@@ -123,15 +115,17 @@ module.exports = function (app) {
                     })
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg)$/,
+                    test: /node_modules/,
+                    include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
                     loader: 'file-loader',
                     options: {
-                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name].[ext]'
+                        context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
+                        name: 'external/[path][name].[ext]'
                     }
                 },
                 {
-                    test: /\.(mp4|mp3)$/,
+                    test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
+                    exclude: /node_modules/,
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
@@ -142,7 +136,7 @@ module.exports = function (app) {
         },
         resolve: sharedResolve,
         resolveLoader: {
-            modules: ['webpack/loaders', 'node_modules']
+            modules: [__dirname + '/loaders', 'node_modules']
         }
     }
 };

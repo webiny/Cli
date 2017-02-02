@@ -88,37 +88,34 @@ module.exports = function (app) {
                     ]
                 },
                 {
-                    test: /\.woff2?$|\.ttf$|\.eot$|\.svg$/,
-                    loader: 'file-loader',
-                    options: {
-                        name: '[path][name]-[hash].[ext]'
-                    }
-                },
-                {
                     test: /\.scss$/,
-                    loader: ExtractTextPlugin.extract({
+                    use: ExtractTextPlugin.extract({
                         fallbackLoader: 'style-loader',
                         loader: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
                     })
                 },
                 {
                     test: /\.css$/,
-                    loader: ExtractTextPlugin.extract({
+                    use: ExtractTextPlugin.extract({
                         fallbackLoader: 'style-loader',
                         loader: 'css-loader'
                     })
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg)$/,
+                    test: /node_modules/,
+                    include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
                     loader: 'file-loader',
                     options: {
-                        name: '[path][name]-[hash].[ext]'
+                        context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
+                        name: 'external/[path][name]-[hash].[ext]'
                     }
                 },
                 {
-                    test: /\.(mp4|mp3)$/,
+                    test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
+                    exclude: /node_modules/,
                     loader: 'file-loader',
                     options: {
+                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
                         name: '[path][name]-[hash].[ext]'
                     }
                 }
@@ -126,7 +123,7 @@ module.exports = function (app) {
         },
         resolve: sharedResolve,
         resolveLoader: {
-            modules: ['webpack/loaders', 'node_modules']
+            modules: [__dirname + '/loaders', 'node_modules']
         }
     };
 };

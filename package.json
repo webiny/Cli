@@ -60,6 +60,7 @@
         "react": "^15.4.2",
         "react-dom": "^15.4.2",
         "react-hot-loader": "^3.0.0-beta.6",
+        "resolve-url-loader": "^1.6.1",
         "sass-loader": "^4.1.1",
         "selenium-webdriver": "^2.53.2",
         "style-loader": "^0.13.1",
