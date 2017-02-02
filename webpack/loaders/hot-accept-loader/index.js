@@ -5,6 +5,10 @@ module.exports = function (source) {
     }
 
     if (this.resourcePath.endsWith('/App.js')) {
+        if (!/\bimport Webiny\b/.test(source)) {
+            source = `import Webiny from 'Webiny';\n${source}`
+        }
+
         return `
             ${source}
             if (module.hot) {
@@ -20,10 +24,6 @@ module.exports = function (source) {
 
     if (/\bmodule.hot\b/.test(source)) {
         return source;
-    }
-
-    if (!/\bimport Webiny\b/.test(source)) {
-        source = `import Webiny from 'Webiny';\n${source}`
     }
 
     return `
