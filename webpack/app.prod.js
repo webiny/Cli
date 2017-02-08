@@ -104,7 +104,7 @@ module.exports = function (app) {
                 {
                     test: /node_modules/,
                     include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
-                    loader: 'file-loader',
+                    use: ['file-loader'],
                     options: {
                         context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
                         name: 'external/[path][name]-[hash].[ext]'
@@ -113,7 +113,7 @@ module.exports = function (app) {
                 {
                     test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
                     exclude: /node_modules/,
-                    loader: 'file-loader',
+                    use: ['file-loader'],
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
                         name: '[path][name]-[hash].[ext]'
