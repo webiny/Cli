@@ -90,21 +90,21 @@ module.exports = function (app) {
                 {
                     test: /\.scss$/,
                     use: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
+                        fallback: 'style-loader',
+                        use: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
                     })
                 },
                 {
                     test: /\.css$/,
                     use: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: 'css-loader'
+                        fallback: 'style-loader',
+                        use: ['css-loader']
                     })
                 },
                 {
                     test: /node_modules/,
                     include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
-                    use: ['file-loader'],
+                    loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
                         name: 'external/[path][name]-[hash].[ext]'
@@ -113,7 +113,7 @@ module.exports = function (app) {
                 {
                     test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
                     exclude: /node_modules/,
-                    use: ['file-loader'],
+                    loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
                         name: '[path][name]-[hash].[ext]'
