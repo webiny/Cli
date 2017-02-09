@@ -23,7 +23,7 @@ module.exports = function (app) {
         }),
         new ExtractTextPlugin('app-[hash].css'),
         new AssetsPlugin(),
-        new webpack.optimize.UglifyJsPlugin({mangle: false, sourceMap: false}),
+        new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
     ];
 
