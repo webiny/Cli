@@ -116,7 +116,7 @@ module.exports = function (app) {
                 },
                 {
                     test: /node_modules/,
-                    include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
+                    include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg)$/,
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
@@ -124,7 +124,7 @@ module.exports = function (app) {
                     }
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|eot|svg)$/,
+                    test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg)$/,
                     exclude: /node_modules/,
                     loader: 'file-loader',
                     options: {
