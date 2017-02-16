@@ -54,6 +54,8 @@ module.exports = function (app) {
         );
     }
 
+    const fileExtensionRegex = /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg|ico)$/;
+
     return {
         name: name,
         cache: true,
@@ -116,7 +118,7 @@ module.exports = function (app) {
                 },
                 {
                     test: /node_modules/,
-                    include: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg)$/,
+                    include: fileExtensionRegex,
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
@@ -124,7 +126,7 @@ module.exports = function (app) {
                     }
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg)$/,
+                    test: fileExtensionRegex,
                     exclude: /node_modules/,
                     loader: 'file-loader',
                     options: {
