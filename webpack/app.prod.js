@@ -21,7 +21,7 @@ module.exports = function (app) {
                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
             }
         }),
-        new ExtractTextPlugin('app-[hash].css'),
+        new ExtractTextPlugin('app-[contenthash].css'),
         new AssetsPlugin(),
         new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
@@ -60,7 +60,7 @@ module.exports = function (app) {
         },
         output: {
             path: outputPath,
-            filename: '[name]-[hash].js',
+            filename: '[name]-[chunkhash].js',
             publicPath: '/build/production/' + app.path + '/'
         },
         externals: name === 'Core.Webiny' ? {} : externals,
