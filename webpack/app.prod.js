@@ -21,9 +21,9 @@ module.exports = function (app) {
                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
             }
         }),
-        new ExtractTextPlugin('app-[hash].css'),
+        new ExtractTextPlugin('app-[contenthash].css'),
         new AssetsPlugin(),
-        new webpack.optimize.UglifyJsPlugin({mangle: false, sourceMap: false}),
+        new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
     ];
 
@@ -47,6 +47,8 @@ module.exports = function (app) {
         );
     }
 
+    const fileExtensionRegex = /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg|ico)$/;
+
     return {
         name: name,
         cache: true,
@@ -58,7 +60,7 @@ module.exports = function (app) {
         },
         output: {
             path: outputPath,
-            filename: '[name]-[hash].js',
+            filename: '[name]-[chunkhash].js',
             publicPath: '/build/production/' + app.path + '/'
         },
         externals: name === 'Core.Webiny' ? {} : externals,
@@ -88,37 +90,49 @@ module.exports = function (app) {
                     ]
                 },
                 {
-                    test: /\.woff2?$|\.ttf$|\.eot$|\.svg$/,
-                    loader: 'file-loader',
-                    options: {
-                        name: '[path][name]-[hash].[ext]'
-                    }
-                },
-                {
                     test: /\.scss$/,
-                    loader: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
+                    use: ExtractTextPlugin.extract({
+                        fallback: 'style-loader',
+                        use: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
                     })
                 },
                 {
                     test: /\.css$/,
-                    loader: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: 'css-loader'
+                    use: ExtractTextPlugin.extract({
+                        fallback: 'style-loader',
+                        use: ['css-loader']
                     })
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg)$/,
+                    test: /node_modules/,
+                    include: fileExtensionRegex,
                     loader: 'file-loader',
                     options: {
-                        name: '[path][name]-[hash].[ext]'
+                        context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
+                        name: 'external/[path][name]-[hash].[ext]'
+                    }
+                },
+                // Files containing /public/ should not include [hash]
+                // This is for rare occasions when we need to include a path to file in TPL template
+                {
+                    test: fileExtensionRegex,
+                    exclude: /node_modules/,
+                    include: /\/public\//,
+                    loader: 'file-loader',
+                    options: {
+                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
+                        name: '[path][name].[ext]'
                     }
                 },
                 {
-                    test: /\.(mp4|mp3)$/,
+                    test: fileExtensionRegex,
+                    exclude: [
+                        /node_modules/,
+                        /\/public\//
+                    ],
                     loader: 'file-loader',
                     options: {
+                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
                         name: '[path][name]-[hash].[ext]'
                     }
                 }
@@ -126,7 +140,7 @@ module.exports = function (app) {
         },
         resolve: sharedResolve,
         resolveLoader: {
-            modules: ['webpack/loaders', 'node_modules']
+            modules: [__dirname + '/loaders', 'node_modules']
         }
     };
 };

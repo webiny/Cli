@@ -21,6 +21,7 @@ module.exports = function (app) {
 
 
     const plugins = [
+        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
             'DEVELOPMENT': true,
             'PRODUCTION': false,
@@ -54,6 +55,8 @@ module.exports = function (app) {
         );
     }
 
+    const fileExtensionRegex = /\.(png|jpg|gif|jpeg|mp4|mp3|woff2?|ttf|otf|eot|svg|ico)$/;
+
     return {
         name: name,
         cache: true,
@@ -62,7 +65,7 @@ module.exports = function (app) {
         entry: {
             app: [
                 'react-hot-loader/patch',
-                'webpack-hot-middleware/client?name=' + name + '&path=http://localhost:3000/__webpack_hmr&quiet=true&overlay=false&reload=false',
+                'webpack-hot-middleware/client?name=' + name + '&path=http://localhost:3000/__webpack_hmr&quiet=false&noInfo=true&warn=false&overlay=true&reload=false',
                 'webpack/hot/only-dev-server',
                 './App.js'
             ]
@@ -101,37 +104,31 @@ module.exports = function (app) {
                     ]
                 },
                 {
-                    test: /\.woff2?$|\.ttf$|\.eot$|\.svg$/,
-                    loader: 'file-loader',
-                    options: {
-                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name].[ext]'
-                    }
-                },
-                {
                     test: /\.scss$/,
                     use: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
+                        fallback: 'style-loader',
+                        use: ['css-loader', 'resolve-url-loader', 'sass-loader?sourceMap']
                     })
                 },
                 {
                     test: /\.css$/,
                     use: ExtractTextPlugin.extract({
-                        fallbackLoader: 'style-loader',
-                        loader: 'css-loader'
+                        fallback: 'style-loader',
+                        use: ['css-loader']
                     })
                 },
                 {
-                    test: /\.(png|jpg|gif|jpeg)$/,
+                    test: /node_modules/,
+                    include: fileExtensionRegex,
                     loader: 'file-loader',
                     options: {
-                        context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name].[ext]'
+                        context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
+                        name: 'external/[path][name].[ext]'
                     }
                 },
                 {
-                    test: /\.(mp4|mp3)$/,
+                    test: fileExtensionRegex,
+                    exclude: /node_modules/,
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
@@ -142,7 +139,7 @@ module.exports = function (app) {
         },
         resolve: sharedResolve,
         resolveLoader: {
-            modules: ['webpack/loaders', 'node_modules']
+            modules: [__dirname + '/loaders', 'node_modules']
         }
     }
 };

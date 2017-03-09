@@ -40,7 +40,7 @@ module.exports = function (app) {
         entry: {},
         output: {
             path: outputPath,
-            filename: process.env.NODE_ENV === 'production' ? '[name]-[hash].js' : '[name].js',
+            filename: process.env.NODE_ENV === 'production' ? '[name]-[chunkhash].js' : '[name].js',
             library: 'Webiny_' + bundleName + '_Vendor'
         },
         plugins: plugins,
