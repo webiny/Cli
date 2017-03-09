@@ -21,6 +21,7 @@ module.exports = function (app) {
 
 
     const plugins = [
+        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
             'DEVELOPMENT': true,
             'PRODUCTION': false,
@@ -64,7 +65,7 @@ module.exports = function (app) {
         entry: {
             app: [
                 'react-hot-loader/patch',
-                'webpack-hot-middleware/client?name=' + name + '&path=http://localhost:3000/__webpack_hmr&quiet=true&overlay=false&reload=false',
+                'webpack-hot-middleware/client?name=' + name + '&path=http://localhost:3000/__webpack_hmr&quiet=false&noInfo=true&warn=false&overlay=true&reload=false',
                 'webpack/hot/only-dev-server',
                 './App.js'
             ]

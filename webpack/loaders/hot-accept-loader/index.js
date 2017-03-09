@@ -12,9 +12,13 @@ module.exports = function (source) {
         return `
             ${source}
             if (module.hot) {
+                // Accept update and suppress errors
+                module.hot.accept(() => {});
                 let lastStatus = 'idle';
+                const path = '${this.resourcePath}'.split('/Apps/')[1].split('/');
                 module.hot.addStatusHandler(status => {
                     if (lastStatus === 'apply' && status === 'idle') {
+                        console.info('[WEBINY] Re-render triggered by', path[0] + '.' + path[2]);
                         Webiny.refresh();
                     }
                     lastStatus = status;
@@ -27,8 +31,7 @@ module.exports = function (source) {
     }
 
     return `
-    ${source}
-    module.hot.accept(err => {
-        if (err) {console.error(err);}
-    });`
+        ${source}
+        module.hot.accept(() => {});
+    `
 };
