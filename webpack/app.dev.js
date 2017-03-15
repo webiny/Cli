@@ -87,16 +87,17 @@ module.exports = function (app) {
                         {
                             loader: 'babel-loader',
                             options: {
-                                "presets": [
-                                    "es2016",
-                                    "es2015",
-                                    "react"
+                                presets: [
+                                    'es2016',
+                                    'es2015',
+                                    'react'
                                 ],
-                                "plugins": [
-                                    "react-hot-loader/babel",
-                                    ["transform-object-rest-spread", {"useBuiltIns": true}],
-                                    ["babel-plugin-transform-builtin-extend", {
-                                        globals: ["Error"]
+                                plugins: [
+                                    'react-hot-loader/babel',
+                                    'transform-async-to-generator',
+                                    ['transform-object-rest-spread', {'useBuiltIns': true}],
+                                    ['babel-plugin-transform-builtin-extend', {
+                                        globals: ['Error']
                                     }]
                                 ]
                             }
