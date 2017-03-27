@@ -96,6 +96,7 @@ module.exports = function (app) {
                                     'react-hot-loader/babel',
                                     'transform-async-to-generator',
                                     ['transform-object-rest-spread', {'useBuiltIns': true}],
+                                    ['babel-plugin-syntax-dynamic-import'],
                                     ['babel-plugin-transform-builtin-extend', {
                                         globals: ['Error']
                                     }]
