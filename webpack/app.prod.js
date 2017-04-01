@@ -100,10 +100,13 @@ module.exports = function (app) {
                 },
                 {
                     test: /\.css$/,
-                    use: ExtractTextPlugin.extract({
-                        fallback: 'style-loader',
-                        use: ['css-loader']
-                    })
+                    use: ['style-loader', {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                        }
+                    }]
                 },
                 {
                     test: /node_modules/,

@@ -4,7 +4,8 @@ const utils = require('../lib/utils');
 module.exports = (app) => {
     return {
         alias: {
-            Webiny: utils.projectRoot('Apps/Core/Js/Webiny/Webiny')
+            'Webiny/Ui': utils.projectRoot('Apps/Core/Js/Webiny/Ui'),
+            'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny')
         },
         extensions: ['.jsx', '.js', '.css', '.scss'],
         modules: [

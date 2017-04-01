@@ -30,7 +30,7 @@
     "chokidar": "^1.6.0",
     "cli-table": "^0.3.1",
     "commander": "^2.9.0",
-    "css-loader": "0.14.5",
+    "css-loader": "^0.28.0",
     "eslint": "^3.14.1",
     "eslint-config-airbnb": "^14.0.0",
     "eslint-import-resolver-webpack": "^0.8.1",
