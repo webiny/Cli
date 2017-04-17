@@ -5,6 +5,7 @@ module.exports = (app) => {
     return {
         alias: {
             'Webiny/Ui': utils.projectRoot('Apps/Core/Js/Webiny/Ui'),
+            'Webiny/Vendors': utils.projectRoot('Apps/Core/Js/Webiny/Vendors'),
             'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny')
         },
         extensions: ['.jsx', '.js', '.css', '.scss'],

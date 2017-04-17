@@ -1,11 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
-const chalk = require('chalk');
 const utils = require('./../lib/utils');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const AssetsPlugin = require('./assets.plugin');
 let externals = require('./externals');
+const ChunkIdsPlugin = require('./plugins/ChunkIds');
 
 module.exports = function (app) {
     const sharedResolve = require('./resolve')(app);
@@ -14,6 +14,7 @@ module.exports = function (app) {
     const outputPath = path.resolve(utils.projectRoot(), 'public_html/build/production', app.path);
 
     let plugins = [
+        new ChunkIdsPlugin(),
         new webpack.DefinePlugin({
             'DEVELOPMENT': false,
             'PRODUCTION': true,
@@ -61,6 +62,7 @@ module.exports = function (app) {
         output: {
             path: outputPath,
             filename: '[name]-[chunkhash].js',
+            chunkFilename: 'chunks/[id]-[chunkhash].js',
             publicPath: '/build/production/' + app.path + '/'
         },
         externals: name === 'Core.Webiny' ? {} : externals,

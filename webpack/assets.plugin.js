@@ -40,7 +40,7 @@ class AssetsPlugin {
 
                     memo['name'] = compiler.name;
 
-                    if (appJs.test(file)) {
+                    if (appJs.test(file) && !file.startsWith('chunks/')) {
                         memo['app'] = file;
                     }
 
@@ -48,13 +48,13 @@ class AssetsPlugin {
                         memo['css'] = file;
                     }
 
-                    if (bootstrapJs.test(file)) {
+                    if (bootstrapJs.test(file) && !file.startsWith('chunks/')) {
                         memo['bootstrap'] = file;
                     }
 
                     try {
                         fs.readdirSync(compiler.options.output.path).map(f => {
-                            if (vendorJs.test(f)) {
+                            if (vendorJs.test(f) && !file.startsWith('chunks/')) {
                                 memo['vendor'] = f;
                             }
                         });

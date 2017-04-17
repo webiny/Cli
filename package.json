@@ -66,7 +66,7 @@
     "sass-loader": "^4.1.1",
     "selenium-webdriver": "^2.53.2",
     "style-loader": "^0.13.1",
-    "webpack": "^2.2.0",
+    "webpack": "^2.4.0",
     "webpack-dev-middleware": "^1.9.0",
     "webpack-dev-server": "^2.2.0-rc.0",
     "webpack-eslint-plugin": "^1.2.0",
