@@ -7,7 +7,7 @@ class ModuleIdsPlugin {
                     if (!chunk.hasEntryModule() && chunk.id === null) {
                         let id = index;
                         if (process.env.NODE_ENV === 'development') {
-                            const context = _.map(chunk.modules, 'context').sort()[0];
+                            const context = chunk.modules[0].context;
 
                             if (context.includes('/node_modules/')) {
                                 id = context.split('/node_modules/')[1].split('/')[0] + '-' + index;
