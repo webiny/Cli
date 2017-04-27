@@ -2,12 +2,18 @@ const path = require('path');
 const utils = require('../lib/utils');
 
 module.exports = (app) => {
+    const aliases = {
+        'Webiny/Ui': utils.projectRoot('Apps/Core/Js/Webiny/Ui'),
+        'Webiny/Vendors': utils.projectRoot('Apps/Core/Js/Webiny/Vendors'),
+        'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny'),
+        'bluebird': 'bluebird/js/browser/bluebird.core.js'
+    };
+
+    // Add an alias for the app being built so we can easily point to the desired folders
+    aliases[app.rootAppName] = path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'Js');
+
     return {
-        alias: {
-            'Webiny/Ui': utils.projectRoot('Apps/Core/Js/Webiny/Ui'),
-            'Webiny/Vendors': utils.projectRoot('Apps/Core/Js/Webiny/Vendors'),
-            'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny')
-        },
+        alias: aliases,
         extensions: ['.jsx', '.js', '.css', '.scss'],
         modules: [
             // We can resolve using app root (eg: Apps/YourApp/node_modules)

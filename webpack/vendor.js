@@ -21,7 +21,8 @@ module.exports = function (app) {
         new webpack.DllPlugin({
             path: outputPath + '/[name].manifest.json',
             name: 'Webiny_' + bundleName + '_Vendor'
-        })
+        }),
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ];
 
     if (process.env.NODE_ENV === 'production') {
@@ -30,7 +31,7 @@ module.exports = function (app) {
         );
     }
 
-    if (app.name == 'Core.Webiny') {
+    if (app.name === 'Core.Webiny') {
         externals = {};
     }
 
@@ -50,14 +51,18 @@ module.exports = function (app) {
                 {
                     test: /\.js$/,
                     exclude: /node_modules/,
-                    loader: 'babel-loader',
-                    options: {
-                        "presets": [
-                            ["es2015", {"modules": false}],
-                            "stage-0",
-                            "react"
-                        ]
-                    }
+                    use: [
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: [
+                                    ['es2015', {modules: false}],
+                                    'stage-0',
+                                    'react'
+                                ]
+                            }
+                        }
+                    ]
                 }
             ]
         },
