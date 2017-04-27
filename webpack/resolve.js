@@ -3,12 +3,11 @@ const utils = require('../lib/utils');
 
 module.exports = (app) => {
     const aliases = {
-        'Webiny/Ui': utils.projectRoot('Apps/Core/Js/Webiny/Ui'),
-        'Webiny/Vendors': utils.projectRoot('Apps/Core/Js/Webiny/Vendors'),
-        'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny'),
-        'bluebird': 'bluebird/js/browser/bluebird.core.js'
+        'Webiny': utils.projectRoot('Apps/Core/Js/Webiny/Webiny')
     };
 
+    // Add an alias to Core (must always be available)
+    aliases['Core'] = path.resolve(utils.projectRoot(), 'Apps/Core/Js');
     // Add an alias for the app being built so we can easily point to the desired folders
     aliases[app.rootAppName] = path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'Js');
 
