@@ -106,7 +106,7 @@ module.exports = function (app) {
                         loader: 'css-loader',
                         options: {
                             modules: true,
-                            localIdentName: '[name]__[local]___[hash:base64:5]'
+                            localIdentName: app.path + '_[folder]_[local]'
                         }
                     }]
                 },
