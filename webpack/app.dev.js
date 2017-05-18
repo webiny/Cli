@@ -7,7 +7,8 @@ const path = require('path');
 const webpack = require('webpack');
 const utils = require('./../lib/utils');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const AssetsPlugin = require('./assets.plugin');
+const AssetsPlugin = require('./plugins/Assets');
+const i18nPlugin = require('./plugins/i18n');
 const Visualizer = require('webpack-visualizer-plugin');
 let externals = require('./externals');
 const ChunkIdsPlugin = require('./plugins/ChunkIds');
@@ -18,7 +19,7 @@ module.exports = function (app) {
     const context = utils.projectRoot(app.sourceFolder);
     const outputPath = path.resolve(utils.projectRoot(), 'public_html/build/development', app.path);
 
-
+    const i18nPluginInstance = new i18nPlugin();
     const plugins = [
         new ChunkIdsPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
@@ -31,6 +32,7 @@ module.exports = function (app) {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('app.css'),
+        i18nPluginInstance,
         new AssetsPlugin(),
         new Visualizer({filename: 'stats.html'})
     ];
@@ -104,7 +106,8 @@ module.exports = function (app) {
                                 ]
                             }
                         },
-                        'hot-accept-loader'
+                        'hot-accept-loader',
+                        i18nPluginInstance.getLoader()
                     ]
                 },
                 {

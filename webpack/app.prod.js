@@ -3,7 +3,8 @@ const webpack = require('webpack');
 const utils = require('./../lib/utils');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const AssetsPlugin = require('./assets.plugin');
+const AssetsPlugin = require('./plugins/Assets');
+const i18nPlugin = require('./plugins/i18n');
 let externals = require('./externals');
 const ChunkIdsPlugin = require('./plugins/ChunkIds');
 
@@ -13,6 +14,7 @@ module.exports = function (app) {
     const context = utils.projectRoot(app.sourceFolder);
     const outputPath = path.resolve(utils.projectRoot(), 'public_html/build/production', app.path);
 
+    const i18nPluginInstance = new i18nPlugin();
     let plugins = [
         new ChunkIdsPlugin(),
         new webpack.DefinePlugin({
@@ -23,6 +25,7 @@ module.exports = function (app) {
             }
         }),
         new ExtractTextPlugin('app-[contenthash].css'),
+        i18nPluginInstance,
         new AssetsPlugin(),
         new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
@@ -90,7 +93,8 @@ module.exports = function (app) {
                                     }]
                                 ]
                             }
-                        }
+                        },
+                        i18nPluginInstance.getLoader()
                     ]
                 },
                 {
