@@ -8,6 +8,11 @@ const bootstrapJs = new RegExp('bootstrap([-0-9a-z]+)?.js$');
 const appCss = new RegExp('app([-0-9a-z]+)?.css$');
 
 class AssetsPlugin {
+    constructor(options) {
+        options = options || {};
+        this.manifestVariable = options.manifestVariable || "webpackManifest";
+    }
+
     apply(compiler) {
         const outputName = 'meta.json';
         const cache = {};
@@ -34,6 +39,12 @@ class AssetsPlugin {
                         return memo;
                     }
 
+                    if (file.startsWith('chunks/')) {
+                        memo.chunks = memo.chunks || {};
+                        memo.chunks[chunk.id] = file;
+                        return memo;
+                    }
+
                     memo['name'] = compiler.name;
 
                     if (appJs.test(file) && !file.startsWith('chunks/')) {
@@ -47,25 +58,26 @@ class AssetsPlugin {
                     if (bootstrapJs.test(file) && !file.startsWith('chunks/')) {
                         memo['bootstrap'] = file;
                     }
-
-                    try {
-                        fs.readdirSync(compiler.options.output.path).map(f => {
-                            if (vendorJs.test(f) && !file.startsWith('chunks/')) {
-                                memo['vendor'] = f;
-                            }
-                        });
-                    } catch (e) {
-                        console.log(e.message);
-                    }
-
                     return memo;
                 }, memo);
             }, {}));
 
+            // Map vendor file
+            try {
+                fs.readdirSync(compiler.options.output.path).map(f => {
+                    if (vendorJs.test(f) && !f.startsWith('chunks/')) {
+                        manifest['vendor'] = f;
+                    }
+                });
+            } catch (e) {
+                console.log(e.message);
+            }
+
             // Append publicPath onto all references.
             // This allows output path to be reflected in the manifest.
+            const urlKeys = ['app', 'vendor', 'css', 'bootstrap'];
             manifest = _.reduce(manifest, (memo, value, key) => {
-                memo[key] = key === 'name' ? value : compiler.options.output.publicPath + value;
+                memo[key] = urlKeys.includes(key) ? compiler.options.output.publicPath + value : value;
                 return memo;
             }, {});
 
@@ -81,6 +93,33 @@ class AssetsPlugin {
             };
 
             compileCallback();
+        });
+
+        let oldChunkFilename;
+        let manifestVariable = this.manifestVariable;
+
+        compiler.plugin("this-compilation", function (compilation) {
+            const mainTemplate = compilation.mainTemplate;
+            mainTemplate.plugin("require-ensure", function (_) {
+                const filename = this.outputOptions.chunkFilename || this.outputOptions.filename;
+
+                if (filename) {
+                    oldChunkFilename = this.outputOptions.chunkFilename;
+                    this.outputOptions.chunkFilename = "__CHUNK_MANIFEST__";
+                }
+
+                return _;
+            });
+        });
+
+        compiler.plugin("compilation", function (compilation) {
+            compilation.mainTemplate.plugin("require-ensure", function (_, chunk, hash, chunkIdVar) {
+                if (oldChunkFilename) {
+                    this.outputOptions.chunkFilename = oldChunkFilename;
+                }
+
+                return _.replace("\"__CHUNK_MANIFEST__\"", manifestVariable + "[" + chunkIdVar + "]");
+            });
         });
     }
 }

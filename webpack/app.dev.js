@@ -2,18 +2,23 @@
  === NOTES ===
  - in development mode your bundles will be significantly larger in size due to hot-reload code being appended to them
  */
-
 const path = require('path');
 const webpack = require('webpack');
-const utils = require('./../lib/utils');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
+const _ = require('lodash');
 const AssetsPlugin = require('./plugins/Assets');
 const i18nPlugin = require('./plugins/i18n');
-const Visualizer = require('webpack-visualizer-plugin');
-let externals = require('./externals');
 const ChunkIdsPlugin = require('./plugins/ChunkIds');
+const utils = require('./../lib/utils');
+let externals = require('./externals');
 
-module.exports = function (app) {
+module.exports = function (app, Webiny) {
+    // Construct URL for hot-reload and assets
+    const port = _.get(Webiny.getConfig(), 'browserSync.port', 3000);
+    const domain = _.get(Webiny.getConfig(), 'browserSync.domain', 'http://localhost');
+    const url = domain + ':' + port;
+
     const sharedResolve = require('./resolve')(app);
     const name = app.name;
     const context = utils.projectRoot(app.sourceFolder);
@@ -21,6 +26,7 @@ module.exports = function (app) {
 
     const i18nPluginInstance = new i18nPlugin();
     const plugins = [
+        // Generate custom chunk ids and names
         new ChunkIdsPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
@@ -32,8 +38,12 @@ module.exports = function (app) {
         }),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin('app.css'),
+        // Parse i18n strings and generate external file with translations
         i18nPluginInstance,
-        new AssetsPlugin(),
+        // Generate meta.json to use for app bootstrap based on generated assets
+        new AssetsPlugin({
+            manifestVariable: 'window["webinyMeta"]["' + name + '"].chunks'
+        }),
         new Visualizer({filename: 'stats.html'})
     ];
 
@@ -67,7 +77,7 @@ module.exports = function (app) {
         entry: {
             app: [
                 'react-hot-loader/patch',
-                'webpack-hot-middleware/client?name=' + name + '&path=http://localhost:3000/__webpack_hmr&quiet=false&noInfo=true&warn=false&overlay=true&reload=false',
+                'webpack-hot-middleware/client?name=' + name + '&path=' + url + '/__webpack_hmr&quiet=false&noInfo=true&warn=false&overlay=true&reload=false',
                 'webpack/hot/only-dev-server',
                 './App.js'
             ]
@@ -75,8 +85,8 @@ module.exports = function (app) {
         output: {
             path: outputPath,
             filename: '[name].js',
-            chunkFilename: 'chunks/[id].js',
-            publicPath: 'http://localhost:3000/build/development/' + app.path + '/'
+            chunkFilename: 'chunks/[name].js',
+            publicPath: url + '/build/development/' + app.path + '/'
         },
         externals: name === 'Core.Webiny' ? {} : externals,
         plugins: plugins,

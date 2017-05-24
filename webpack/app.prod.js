@@ -1,12 +1,14 @@
 const path = require('path');
 const webpack = require('webpack');
-const utils = require('./../lib/utils');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+
+// Custom libs
 const AssetsPlugin = require('./plugins/Assets');
 const i18nPlugin = require('./plugins/i18n');
-let externals = require('./externals');
 const ChunkIdsPlugin = require('./plugins/ChunkIds');
+const utils = require('./../lib/utils');
+let externals = require('./externals');
 
 module.exports = function (app) {
     const sharedResolve = require('./resolve')(app);
@@ -16,7 +18,9 @@ module.exports = function (app) {
 
     const i18nPluginInstance = new i18nPlugin();
     let plugins = [
+        // Generate custom chunk ids and names
         new ChunkIdsPlugin(),
+        // Define environment and other constants
         new webpack.DefinePlugin({
             'DEVELOPMENT': false,
             'PRODUCTION': true,
@@ -24,9 +28,17 @@ module.exports = function (app) {
                 'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
             }
         }),
+        // To generate module ids that are preserved between builds
+        new webpack.HashedModuleIdsPlugin(),
+        // This is required to base the file hashes on file contents (to allow long term caching)
+        new WebpackChunkHash(),
         new ExtractTextPlugin('app-[contenthash].css'),
+        // Parse i18n strings and generate external file with translations
         i18nPluginInstance,
-        new AssetsPlugin(),
+        // Generate meta.json to use for app bootstrap based on generated assets
+        new AssetsPlugin({
+            manifestVariable: 'window["webinyMeta"]["' + name + '"].chunks'
+        }),
         new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
     ];
@@ -65,7 +77,7 @@ module.exports = function (app) {
         output: {
             path: outputPath,
             filename: '[name]-[chunkhash].js',
-            chunkFilename: 'chunks/[id]-[chunkhash].js',
+            chunkFilename: 'chunks/[chunkhash].js',
             publicPath: '/build/production/' + app.path + '/'
         },
         externals: name === 'Core.Webiny' ? {} : externals,
@@ -124,7 +136,7 @@ module.exports = function (app) {
                     }
                 },
                 // Files containing /public/ should not include [hash]
-                // This is for rare occasions when we need to include a path to file in TPL template
+                // This is for rare occasions when we need to include a path to the file in TPL template
                 {
                     test: fileExtensionRegex,
                     exclude: /node_modules/,

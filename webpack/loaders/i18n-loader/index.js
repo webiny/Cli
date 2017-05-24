@@ -19,8 +19,7 @@ module.exports = function (source) {
 
     let m;
     while (m = stringRegex.exec(source)) {
-        const {fullMatch, value} = {fullMatch: m[0], value: m[1]};
-        options.addString(this.resourcePath, i18nKey, value);
+        options.addString(this.resourcePath, i18nKey, m[1]);
     }
 
     return source;
