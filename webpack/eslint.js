@@ -10,7 +10,7 @@ module.exports = {
     use: [{
         loader: 'eslint-loader',
         options: {
-            configFile: utils.projectRoot('Apps/Core/Js/Webiny/.eslintrc')
+            configFile: utils.projectRoot('Apps/Webiny/Js/Core/.eslintrc')
         }
     }]
 };

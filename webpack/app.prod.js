@@ -54,11 +54,11 @@ module.exports = function (app) {
         );
     }
 
-    if (name !== 'Core.Webiny') {
+    if (name !== 'Webiny.Core') {
         plugins.push(
             new webpack.DllReferencePlugin({
-                context: utils.projectRoot('Apps/Core/Js/Webiny'),
-                manifest: utils.projectRoot('public_html/build/production') + '/Core_Webiny/vendor.manifest.json'
+                context: utils.projectRoot('Apps/Webiny/Js/Core'),
+                manifest: utils.projectRoot('public_html/build/production') + '/Webiny_Core/vendor.manifest.json'
             })
         );
     }
@@ -80,7 +80,7 @@ module.exports = function (app) {
             chunkFilename: 'chunks/[chunkhash].js',
             publicPath: '/build/production/' + app.path + '/'
         },
-        externals: name === 'Core.Webiny' ? {} : externals,
+        externals: name === 'Webiny.Core' ? {} : externals,
         plugins,
         module: {
             rules: [

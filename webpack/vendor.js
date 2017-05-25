@@ -31,7 +31,7 @@ module.exports = function (app) {
         );
     }
 
-    if (app.name === 'Core.Webiny') {
+    if (app.name === 'Webiny.Core') {
         externals = {};
     }
 

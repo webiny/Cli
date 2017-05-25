@@ -14,7 +14,7 @@ class Webiny {
     constructor() {
         this.version = JSON.parse(utils.readFile(__dirname + '/package.json')).version;
         this.apps = [];
-        this.lastRun = null;
+        this.webinyConfig = null;
 
         program
             .version(this.version)
@@ -130,25 +130,27 @@ class Webiny {
         return this.apps;
     }
 
-    getRunLog() {
-        if (this.lastRun) {
-            return this.lastRun;
+    getConfig() {
+        if (this.webinyConfig) {
+            return this.webinyConfig;
         }
 
         try {
-            this.lastRun = JSON.parse(utils.readFile(utils.projectRoot('webiny.json')));
+            this.webinyConfig = JSON.parse(utils.readFile(utils.projectRoot('webiny.json')));
         } catch (e) {
-            this.lastRun = {
-                apps: [],
-                host: ''
+            this.webinyConfig = {
+                lastRun: {
+                    apps: [],
+                    host: ''
+                }
             };
         }
-        return this.lastRun;
+        return this.webinyConfig;
     }
 
-    saveRunLog(log) {
-        utils.writeFile(utils.projectRoot('webiny.json'), JSON.stringify(log));
-        this.lastRun = log;
+    saveConfig(config) {
+        utils.writeFile(utils.projectRoot('webiny.json'), JSON.stringify(config, null, 4));
+        this.webinyConfig = config;
     }
 
     renderMenu() {
