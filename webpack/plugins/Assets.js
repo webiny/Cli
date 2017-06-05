@@ -4,19 +4,20 @@ const _ = require('lodash');
 
 const appJs = new RegExp('app([-0-9a-z]+)?.js$');
 const vendorJs = new RegExp('vendor([-0-9a-z]+)?.js$');
-const bootstrapJs = new RegExp('bootstrap([-0-9a-z]+)?.js$');
 const appCss = new RegExp('app([-0-9a-z]+)?.css$');
 
 class AssetsPlugin {
     constructor(options) {
         options = options || {};
         this.manifestVariable = options.manifestVariable || "webpackManifest";
+        this.assetRules = options.assetRules || [];
     }
 
     apply(compiler) {
         const outputName = 'meta.json';
         const cache = {};
         const moduleAssets = {};
+        const appPath = compiler.options.name.replace('.', '_');
 
         compiler.plugin('compilation', function (compilation) {
             compilation.plugin('module-asset', function (module, file) {
@@ -55,9 +56,6 @@ class AssetsPlugin {
                         memo['css'] = file;
                     }
 
-                    if (bootstrapJs.test(file) && !file.startsWith('chunks/')) {
-                        memo['bootstrap'] = file;
-                    }
                     return memo;
                 }, memo);
             }, {}));
@@ -75,11 +73,32 @@ class AssetsPlugin {
 
             // Append publicPath onto all references.
             // This allows output path to be reflected in the manifest.
-            const urlKeys = ['app', 'vendor', 'css', 'bootstrap'];
-            manifest = _.reduce(manifest, (memo, value, key) => {
-                memo[key] = urlKeys.includes(key) ? compiler.options.output.publicPath + value : value;
-                return memo;
-            }, {});
+            if (process.env.NODE_ENV === 'production') {
+                const urlKeys = ['app', 'vendor', 'css', 'chunks'];
+                manifest = _.reduce(manifest, (memo, value, key) => {
+                    if (!urlKeys.includes(key)) {
+                        memo[key] = value;
+                        return memo;
+                    }
+
+                    if (key === 'chunks') {
+                        const chunks = {};
+                        _.each(value, (chkValue, chkKey) => {
+                            chunks[chkKey] = this.generateUrl(chkValue, appPath);
+                        });
+                        memo[key] = chunks;
+                    } else {
+                        memo[key] = this.generateUrl(value, appPath);
+                    }
+                    return memo;
+                }, {});
+            } else {
+                const urlKeys = ['app', 'vendor', 'css'];
+                manifest = _.reduce(manifest, (memo, value, key) => {
+                    memo[key] = urlKeys.includes(key) ? compiler.options.output.publicPath + value : value;
+                    return memo;
+                }, {});
+            }
 
             Object.keys(manifest).sort().forEach(key => {
                 cache[key] = manifest[key];
@@ -121,6 +140,20 @@ class AssetsPlugin {
                 return _.replace("\"__CHUNK_MANIFEST__\"", manifestVariable + "[" + chunkIdVar + "]");
             });
         });
+    }
+
+    generateUrl(file, appPath) {
+        let prefix = '/build/production/' + appPath;
+
+        _.each(this.assetRules, rule => {
+            const regex = new RegExp(rule.test);
+            if (regex.test(file)) {
+                prefix = rule.domain + prefix;
+                return false;
+            }
+        });
+
+        return prefix + '/' + file;
     }
 }
 

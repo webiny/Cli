@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const Visualizer = require('webpack-visualizer-plugin');
 const utils = require('../lib/utils');
 let externals = require('./externals');
 
@@ -22,12 +23,20 @@ module.exports = function (app) {
             path: outputPath + '/[name].manifest.json',
             name: 'Webiny_' + bundleName + '_Vendor'
         }),
-        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+        new Visualizer({filename: 'vendor.html'})
     ];
 
     if (process.env.NODE_ENV === 'production') {
         plugins.push(
-            new webpack.optimize.UglifyJsPlugin()
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                },
+                comments: false,
+                mangle: true,
+                sourceMap: false
+            })
         );
     }
 
@@ -56,8 +65,8 @@ module.exports = function (app) {
                             loader: 'babel-loader',
                             options: {
                                 presets: [
+                                    'es2016',
                                     ['es2015', {modules: false}],
-                                    'stage-0',
                                     'react'
                                 ]
                             }

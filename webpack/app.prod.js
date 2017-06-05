@@ -1,4 +1,5 @@
 const path = require('path');
+const _ = require('lodash');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackChunkHash = require('webpack-chunk-hash');
@@ -10,13 +11,18 @@ const ChunkIdsPlugin = require('./plugins/ChunkIds');
 const utils = require('./../lib/utils');
 let externals = require('./externals');
 
-module.exports = function (app) {
+module.exports = function (app, Webiny, config) {
     const sharedResolve = require('./resolve')(app);
     const name = app.name;
     const context = utils.projectRoot(app.sourceFolder);
     const outputPath = path.resolve(utils.projectRoot(), 'public_html/build/production', app.path);
 
     const i18nPluginInstance = new i18nPlugin();
+    const assetsPlugin = new AssetsPlugin({
+        assetRules: config.assetRules,
+        manifestVariable: 'window["webinyMeta"]["' + name + '"].chunks'
+    });
+
     let plugins = [
         // Generate custom chunk ids and names
         new ChunkIdsPlugin(),
@@ -36,9 +42,7 @@ module.exports = function (app) {
         // Parse i18n strings and generate external file with translations
         i18nPluginInstance,
         // Generate meta.json to use for app bootstrap based on generated assets
-        new AssetsPlugin({
-            manifestVariable: 'window["webinyMeta"]["' + name + '"].chunks'
-        }),
+        assetsPlugin,
         new webpack.optimize.UglifyJsPlugin({mangle: true, sourceMap: false}),
         new webpack.optimize.OccurrenceOrderPlugin()
     ];
@@ -78,7 +82,7 @@ module.exports = function (app) {
             path: outputPath,
             filename: '[name]-[chunkhash].js',
             chunkFilename: 'chunks/[chunkhash].js',
-            publicPath: '/build/production/' + app.path + '/'
+            publicPath: '' // In production builds we do not use public path. All asset paths are built into the bundles.
         },
         externals: name === 'Webiny.Core' ? {} : externals,
         plugins,
@@ -93,6 +97,7 @@ module.exports = function (app) {
                             loader: 'babel-loader',
                             options: {
                                 presets: [
+                                    'es2016',
                                     'es2015',
                                     'react'
                                 ],
@@ -132,7 +137,10 @@ module.exports = function (app) {
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), 'Apps', app.rootAppName, 'node_modules'),
-                        name: 'external/[path][name]-[hash].[ext]'
+                        name: 'external/[path][name]-[hash].[ext]',
+                        publicPath: (file) => {
+                            return assetsPlugin.generateUrl(file, app.path);
+                        }
                     }
                 },
                 // Files containing /public/ should not include [hash]
@@ -144,7 +152,10 @@ module.exports = function (app) {
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name].[ext]'
+                        name: '[path][name].[ext]',
+                        publicPath: (file) => {
+                            return assetsPlugin.generateUrl(file, app.path);
+                        }
                     }
                 },
                 {
@@ -156,7 +167,10 @@ module.exports = function (app) {
                     loader: 'file-loader',
                     options: {
                         context: path.resolve(utils.projectRoot(), app.sourceFolder, 'Assets'),
-                        name: '[path][name]-[hash].[ext]'
+                        name: '[path][name]-[hash].[ext]',
+                        publicPath: (file) => {
+                            return assetsPlugin.generateUrl(file, app.path);
+                        }
                     }
                 }
             ]
