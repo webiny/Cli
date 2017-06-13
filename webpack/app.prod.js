@@ -37,7 +37,7 @@ module.exports = function (app, Webiny, config) {
         // To generate module ids that are preserved between builds
         new webpack.HashedModuleIdsPlugin(),
         // This is required to base the file hashes on file contents (to allow long term caching)
-        new WebpackChunkHash(),
+        new WebpackChunkHash({additionalHashContent: chunk => chunk.id}),
         new ExtractTextPlugin('app-[contenthash].css'),
         // Parse i18n strings and generate external file with translations
         i18nPluginInstance,
