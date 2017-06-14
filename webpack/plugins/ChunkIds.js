@@ -1,4 +1,4 @@
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 class ChunkIds {
     apply(compiler) {
@@ -32,8 +32,18 @@ class ChunkIds {
     }
 
     createChunkIdHash(chunk) {
-        const paths = chunk.modules.map(m => m.context).sort().join('\n');
+        // We are generating chunk id based on containing modules (their `resource` path relative to `Apps` folder).
+        // That way chunk id does not change as long as it contains the same modules (no matter the content).
+        const paths = chunk.modules.map(this.getRelativeModulePath).sort().join('\n');
         return crypto.createHash('md5').update(paths).digest('hex').substr(0, 10);
+    }
+
+    getRelativeModulePath(module) {
+        if (!module || !module.resource) {
+            return '';
+        }
+
+        return module.resource.split('/Apps/').pop();
     }
 }
 
