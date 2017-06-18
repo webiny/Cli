@@ -117,6 +117,15 @@ class Webiny {
                     const release = new Release(this, releaseConfig);
                     release.run();
                     break;
+                case 'run-tests':
+                    const runTestsConfig = {
+                        apps: program.all ? this.getApps() : _.filter(this.getApps(), a => program.app.indexOf(a.name) > -1)
+                    };
+
+                    const RunTests = require('./lib/scripts/runTests');
+                    const tests = new RunTests(this, runTestsConfig);
+                    tests.run();
+                    break;
                 default:
                     process.exit(1);
             }
