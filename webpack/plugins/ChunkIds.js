@@ -3,6 +3,7 @@ const crypto = require('crypto');
 class ChunkIds {
     apply(compiler) {
         compiler.plugin("compilation", (compilation) => {
+            // Generate chunk IDs
             compilation.plugin("before-chunk-ids", (chunks) => {
                 chunks.forEach((chunk, index) => {
                     if (!chunk.hasEntryModule() && chunk.id === null) {
@@ -28,6 +29,23 @@ class ChunkIds {
                     }
                 });
             });
+
+            // In production we parse [webinyhash] filename placeholder to populate it with chunkIds combined hash
+            // This is required due to the fact that chunk ids may change, but entry point [chunkhash] will not change.
+            // This will create an up-to-date hash and your CDN will not server wrong files :)
+            if (process.env.NODE_ENV === 'production') {
+                const mainTemplate = compilation.mainTemplate;
+                mainTemplate.plugin("asset-path", (path, data) => {
+                    if (path.includes('[webinyhash]')) {
+                        const chunkIds = data.chunk.chunks.map(chunk => chunk.renderedHash);
+                        const chunkIdsHash = crypto.createHash('md5').update(chunkIds.join(':')).digest('hex');
+
+                        return path.replace(/\[webinyhash\]/gi, chunkIdsHash.substring(0, 10));
+                    }
+
+                    return path;
+                });
+            }
         });
     }
 

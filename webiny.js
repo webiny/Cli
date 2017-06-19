@@ -25,6 +25,7 @@ class Webiny {
             .option('-h, --host [host]', 'Connection string for your target server.')
             .option('-w --website [website]', 'Target server domain.') // https://github.com/tj/commander.js/issues/370
             .option('-b, --basic-auth [basicAuth]', 'Basic Authentication string for your target server.')
+            .option('-c, --config-set [configSet]', 'ConfigSet to use for production build.')
             .option('-r, --release [release]', 'Location of release archive to use. Can be an absolute path or a path relative to project root.')
             .action(function (cmd = 'menu') {
                 program.task = cmd;
@@ -83,7 +84,8 @@ class Webiny {
                 case 'build':
                     process.env.NODE_ENV = 'production';
                     const buildConfig = {
-                        apps: program.all ? this.getApps() : _.filter(this.getApps(), a => program.app.indexOf(a.name) > -1)
+                        apps: program.all ? this.getApps() : _.filter(this.getApps(), a => program.app.indexOf(a.name) > -1),
+                        configSet: program.configSet
                     };
 
                     const Build = require('./lib/scripts/build');

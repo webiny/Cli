@@ -80,8 +80,8 @@ module.exports = function (app, Webiny, config) {
         },
         output: {
             path: outputPath,
-            filename: '[name]-[chunkhash].js',
-            chunkFilename: 'chunks/[chunkhash].js',
+            filename: '[name]-[chunkhash:10][webinyhash].js',
+            chunkFilename: 'chunks/[chunkhash:10].js',
             publicPath: '' // In production builds we do not use public path. All asset paths are built into the bundles.
         },
         externals: name === 'Webiny.Core' ? {} : externals,
