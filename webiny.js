@@ -24,7 +24,13 @@ class WebinyCli {
                 program.task = cmd;
             });
 
+        const stdin = process.stdin;
+        stdin.setRawMode(true);
+        stdin.resume();
+        process.stdin.write('Loading plugins...');
         this.plugins = Webiny.getPlugins().map(plClass => new plClass(program));
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
 
         program.parse(process.argv);
     }
