@@ -1,9 +1,7 @@
 #! /usr/local/bin/node
 const program = require('commander');
-const fs = require('fs-extra');
 const _ = require('lodash');
 const chalk = require('chalk');
-const moment = require('moment');
 const checkUpdates = require('./lib/boot/checkUpdates');
 const setup = require('./lib/boot/setup');
 const Menu = require('./lib/navigation');
