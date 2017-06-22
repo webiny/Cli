@@ -47,10 +47,10 @@ class WebinyCli {
                 Webiny.info('Webiny CLI ' + chalk.cyan('v' + this.version));
                 Webiny.log('---------------------------------------------');
                 const checkRequirements = require('./lib/boot/checkRequirements');
-                if (!checkRequirements.firstRun()) {
-                    this.menu = new Menu(this.plugins);
-                    return this.renderMenu();
-                }
+                /*if (!checkRequirements.firstRun()) {
+                 this.menu = new Menu(this.plugins);
+                 return this.renderMenu();
+                 }*/
 
                 // First run will check the system requirements and setup the platform
                 try {
@@ -58,12 +58,12 @@ class WebinyCli {
                     checkRequirements.requirements();
                     Webiny.success("Great, all the requirements are in order!");
                     Webiny.log("\nSetting up the platform...");
-                    setup(() => {
-                        Webiny.log('-------------------------------------');
+                    setup(program).then(answers => {
+                        Webiny.log(`\n-------------------------------------`);
                         Webiny.success('Platform setup is now completed!');
-                        Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.`);
+                        Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
                         Webiny.log('-------------------------------------');
-                        const plugins = Webiny.getPlugins(true).map(plClass => new plClass(program));
+                        const plugins = Webiny.getPlugins().map(plClass => new plClass(program));
                         this.menu = new Menu(plugins);
                         return this.renderMenu();
                     });
