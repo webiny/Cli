@@ -1,37 +1,37 @@
 {
-    "author": "Pavel Denisjuk <pavel@webiny.com>",
-    "name": "webiny",
-    "description": "A CLI tool to setup Webiny project, build, watch, run tests and deploy your project to remote server",
-    "version": "0.8.17",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Webiny/Cli.git"
-    },
-    "keywords": [
-        "webiny",
-        "platform",
-        "cli"
-    ],
-    "main": "index.js",
-    "dependencies": {
-        "commander": "^2.9.0",
-        "fs-extra": "^0.30.0",
-        "inquirer": "^3.1.1",
-        "js-yaml": "^3.4.6",
-        "lodash": "^4.12.0",
-        "moment": "^2.17.1",
-        "node-fetch": "^1.6.0",
-        "password-generator": "^2.0.2"
-    },
-    "optionalDependencies": {
-        "fsevents": "^1.0.17"
-    },
-    "scripts": {
-        "postinstall": "node scripts/install.js"
-    },
-    "bin": "./bin/webiny.js",
-    "bugs": {
-        "url": "https://github.com/Webiny/Cli/issues"
-    }
+  "author": "Pavel Denisjuk <pavel@webiny.com>",
+  "name": "webiny",
+  "description": "A CLI tool to setup Webiny project, build, watch, run tests and deploy your project to remote server",
+  "version": "0.8.18",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Webiny/Cli.git"
+  },
+  "keywords": [
+    "webiny",
+    "platform",
+    "cli"
+  ],
+  "main": "index.js",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs-extra": "^0.30.0",
+    "inquirer": "^3.1.1",
+    "js-yaml": "^3.4.6",
+    "lodash": "^4.12.0",
+    "moment": "^2.17.1",
+    "node-fetch": "^1.6.0",
+    "password-generator": "^2.0.2"
+  },
+  "optionalDependencies": {
+    "fsevents": "^1.0.17"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "bin": "./bin/webiny.js",
+  "bugs": {
+    "url": "https://github.com/Webiny/Cli/issues"
+  }
 }
