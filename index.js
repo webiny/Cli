@@ -47,10 +47,10 @@ class WebinyCli {
                 Webiny.info('Webiny CLI ' + chalk.cyan('v' + this.version));
                 Webiny.log('---------------------------------------------');
                 const checkRequirements = require('./lib/boot/checkRequirements');
-                /*if (!checkRequirements.firstRun()) {
-                 this.menu = new Menu(this.plugins);
-                 return this.renderMenu();
-                 }*/
+                if (!checkRequirements.firstRun()) {
+                    this.menu = new Menu(this.plugins);
+                    return this.renderMenu();
+                }
 
                 // First run will check the system requirements and setup the platform
                 try {
