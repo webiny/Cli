@@ -18,6 +18,7 @@ class WebinyCli {
             .option('-t, --task [name]', 'Task to execute (renders menu if not specified).', 'menu')
             .option('-a, --app [name]', 'App to execute task on (specify multiple times for multiple apps).', this.collectApps, [])
             .option('--all', 'Select all apps.')
+            .option('--show-timestamps [format]', 'Show timestamps next to each console message')
             .action(function (cmd = 'menu') {
                 program.task = cmd;
             });
@@ -39,6 +40,10 @@ class WebinyCli {
     }
 
     run() {
+        if (program.showTimestamps) {
+            require('console-stamp')(console, _.isString(program.showTimestamps) ? program.showTimestamps : 'HH:MM:ss.l');
+        }
+
         if (program.task === 'menu') {
             checkUpdates(this.version).then(() => {
                 Webiny.log('---------------------------------------------');
