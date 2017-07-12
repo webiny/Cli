@@ -10,7 +10,6 @@ const Webiny = require('./lib/webiny');
 class WebinyCli {
     constructor() {
         this.version = JSON.parse(Webiny.readFile(__dirname + '/package.json')).version;
-        this.webinyConfig = null;
 
         program
             .version(this.version)
@@ -27,7 +26,7 @@ class WebinyCli {
         stdin.setRawMode(true);
         stdin.resume();
         process.stdin.write('Loading plugins...');
-        this.plugins = Webiny.getPlugins().map(plClass => new plClass(program));
+        Webiny.getPlugins();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
 
@@ -51,42 +50,44 @@ class WebinyCli {
                 Webiny.log('---------------------------------------------');
                 const checkRequirements = require('./lib/boot/checkRequirements');
                 if (!checkRequirements.firstRun()) {
-                    this.menu = new Menu(this.plugins);
-                    return this.renderMenu();
+                    const menu = new Menu();
+                    return menu.render();
                 }
 
-                // First run will check the system requirements and setup the platform
                 try {
+                    // First run will check the system requirements and setup the platform
                     Webiny.log('Checking requirements...');
                     checkRequirements.requirements();
                     Webiny.success("Great, all the requirements are in order!");
                     Webiny.log("\nSetting up the platform...");
-                    setup(program).then(answers => {
+                    setup().then(answers => {
                         Webiny.log(`\n-------------------------------------`);
                         Webiny.success('Platform setup is now completed!');
                         Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
                         Webiny.log('-------------------------------------');
-                        const plugins = Webiny.getPlugins().map(plClass => new plClass(program));
-                        this.menu = new Menu(plugins);
-                        return this.renderMenu();
+                        const menu = new Menu();
+                        return menu.render();
                     });
                 } catch (err) {
-                    Webiny.exclamation(err.message);
+                    Webiny.exclamation('Setup failed with the following problem:', err);
                     process.exit(1);
                 }
             });
         } else {
             const apps = Webiny.getApps();
-            const plugins = Webiny.getPlugins().map(plClass => new plClass(program));
-            const plugin = _.find(plugins, pl => pl.getTask() === program.task);
             program.apps = program.all ? apps : _.filter(apps, a => program.app.indexOf(a.getName()) > -1);
-
-            plugin.runTask(program);
+            this.runTask(program.task, program);
         }
     }
 
-    renderMenu() {
-        return this.menu.render();
+    runTask(task, config) {
+        const plugin = Webiny.getPlugins()[task];
+        if (plugin) {
+            return plugin.runTask(config, () => process.exit(0), (task, config) => this.runTask(task, config));
+        }
+
+        Webiny.failure(`Plugin "${task}" was not found!`);
+        process.exit(1);
     }
 }
 
