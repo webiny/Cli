@@ -160,3 +160,4 @@ pip-log.txt
 
 # SVN
 .svn
+/package-lock.json
