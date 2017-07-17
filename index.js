@@ -83,7 +83,7 @@ class WebinyCli {
     runTask(task, config) {
         const plugin = Webiny.getPlugins()[task];
         if (plugin) {
-            return plugin.runTask(config, () => process.exit(0), (task, config) => this.runTask(task, config));
+            return plugin.runTask(config, (res = 0) => process.exit(res), (task, config) => this.runTask(task, config));
         }
 
         Webiny.failure(`Plugin "${task}" was not found!`);
