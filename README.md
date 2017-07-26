@@ -7,8 +7,14 @@ your setup to remote servers.
 ## How to use
 In your project folder run the following commands:
 ```
-npm install webiny
-node webiny
+// Installation using yarn
+yarn add webiny-cli
+
+// Installation using npm
+npm i webiny-cli
+
+// Run CLI tool
+webiny-cli
 ```
 ... and follow the on-screen instructions.
  
