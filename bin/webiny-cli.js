@@ -3,5 +3,5 @@ if (!process.env.PWD) {
     process.env.PWD = __dirname;
 }
 
-const Webiny = require('..');
-new Webiny().run();
+const WebinyCli = require('..');
+new WebinyCli().run();
