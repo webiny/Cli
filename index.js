@@ -13,14 +13,14 @@ class WebinyCli {
 
         program
             .version(this.version)
-            .arguments('<cmd>')
-            .option('-t, --task [name]', 'Task to execute (renders menu if not specified).', 'menu')
-            .option('-a, --app [name]', 'App to execute task on (specify multiple times for multiple apps).', this.collectApps, [])
-            .option('--all', 'Select all apps.')
-            .option('--show-timestamps [format]', 'Show timestamps next to each console message')
-            .action(function (cmd = 'menu') {
-                program.task = cmd;
-            });
+            .description([
+                'Webiny CLI tool will help you manage your project from development to deployment.',
+                'It supports plugins so you are welcome to develop new plugins for your project and connect to the existing plugins using hooks.',
+                'Run without arguments to enter GUI mode.',
+                '',
+                'Visit https://www.webiny.com/ for tutorials and documentarion.'
+            ].join('\n  '))
+            .option('--show-timestamps [format]', 'Show timestamps next to each console message');
 
         const stdin = process.stdin;
         stdin.setRawMode(true);
@@ -29,21 +29,16 @@ class WebinyCli {
         Webiny.getPlugins();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-
-        program.parse(process.argv);
-    }
-
-    collectApps(val, collection) {
-        collection.push(val);
-        return collection;
     }
 
     run() {
+        program.parse(process.argv);
+
         if (program.showTimestamps) {
             require('console-stamp')(console, _.isString(program.showTimestamps) ? program.showTimestamps : 'HH:MM:ss.l');
         }
 
-        if (program.task === 'menu') {
+        if (program.args.length === 0) {
             checkUpdates(this.version).then(() => {
                 Webiny.log('---------------------------------------------');
                 Webiny.info('Webiny CLI ' + chalk.cyan('v' + this.version));
@@ -66,28 +61,14 @@ class WebinyCli {
                         Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
                         Webiny.log('-------------------------------------');
                         const menu = new Menu();
-                        return menu.render();
+                        menu.render();
                     });
                 } catch (err) {
                     Webiny.exclamation('Setup failed with the following problem:', err);
                     process.exit(1);
                 }
             });
-        } else {
-            const apps = Webiny.getApps();
-            program.apps = program.all ? apps : _.filter(apps, a => program.app.indexOf(a.getName()) > -1);
-            this.runTask(program.task, program);
         }
-    }
-
-    runTask(task, config) {
-        const plugin = Webiny.getPlugins()[task];
-        if (plugin) {
-            return plugin.runTask(config, (res = 0) => process.exit(res), (task, config) => this.runTask(task, config));
-        }
-
-        Webiny.failure(`Plugin "${task}" was not found!`);
-        process.exit(1);
     }
 }
 

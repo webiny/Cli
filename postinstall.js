@@ -14,7 +14,7 @@ try {
         return;
     }
 
-    config += `# Added by webiny\nexport PATH="$PATH:${binDir}"`;
+    config += `# Added by webiny-cli\nexport PATH="$PATH:${binDir}"`;
     Webiny.writeFile(profilePath, config);
     Webiny.success(`Added ${magenta('./node_modules/.bin')} executables to PATH in ${magenta(profilePath)}`);
     Webiny.info('If not using Webiny vagrant box, please restart your shell or execute the export command yourself as follows:');
