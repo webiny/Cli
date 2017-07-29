@@ -29,6 +29,11 @@ class WebinyCli {
         Webiny.getPlugins();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
+
+        program.command('*', null, {noHelp: true}).action(cmd => {
+            Webiny.failure(`${chalk.magenta(cmd)} is not a valid command. Run ${chalk.magenta('webiny-cli -h')} to see all available commands.`);
+            process.exit(1);
+        });
     }
 
     run() {
