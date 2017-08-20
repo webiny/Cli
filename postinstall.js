@@ -1,12 +1,19 @@
 #! /usr/bin/env node
 const username = require('username');
 const chalk = require('chalk');
-const binDir = './node_modules/.bin';
 const Webiny = require('./lib/webiny');
-const profilePath = process.platform === 'darwin' ? `/Users/${username.sync()}/profile` : `/home/${username.sync()}/.profile`;
 const {magenta} = chalk;
+const binDir = './node_modules/.bin';
+const OSX = process.platform === 'darwin';
 
 try {
+    const user = username.sync();
+    const osxBashProfile = `/Users/${user}/.bash_profile`;
+    let profilePath = OSX ? `/Users/${user}/.profile` : `/home/${user}/.profile`;
+    if (OSX && Webiny.fileExists(osxBashProfile)) {
+        profilePath = osxBashProfile;
+    }
+
     let config = Webiny.readFile(profilePath);
 
     if (config.match(binDir)) {
