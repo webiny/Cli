@@ -20,7 +20,8 @@ class WebinyCli {
                 '',
                 'Visit https://www.webiny.com/ for tutorials and documentarion.'
             ].join('\n  '))
-            .option('--show-timestamps [format]', 'Show timestamps next to each console message');
+            .option('--show-timestamps [format]', 'Show timestamps next to each console message')
+            .option('--docker', 'Setup project using Docker');
 
         const stdin = process.stdin;
         stdin.setRawMode(true);
@@ -55,18 +56,23 @@ class WebinyCli {
                 }
 
                 try {
-                    // First run will check the system requirements and setup the platform
-                    Webiny.log('Checking requirements...');
-                    checkRequirements.requirements();
-                    Webiny.success("Great, all the requirements are in order!");
+                    if (!program.docker) {
+                        // First run will check the system requirements and setup the platform
+                        Webiny.log('Checking requirements...');
+                        checkRequirements.requirements();
+                        Webiny.success("Great, all the requirements are in order!");
+                    }
+
                     Webiny.log("\nSetting up the platform...");
-                    setup().then(answers => {
+                    setup(program.docker ? 'docker' : 'default').then(answers => {
                         Webiny.log(`\n-------------------------------------`);
                         Webiny.success('Platform setup is now completed!');
                         Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
                         Webiny.log('-------------------------------------');
                         const menu = new Menu();
                         menu.render();
+                    }).catch(e => {
+                        Webiny.failure(e.message);
                     });
                 } catch (err) {
                     Webiny.exclamation('Setup failed with the following problem:', err);
