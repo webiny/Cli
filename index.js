@@ -77,7 +77,7 @@ class WebinyCli {
                         }
 
                         Webiny.log("\nSetting up the platform...");
-                        return setup(program.env).then(answers => {
+                        return setup(selectedEnv).then(answers => {
                             Webiny.log(`\n-------------------------------------`);
                             Webiny.success('Platform setup is now completed!');
                             Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
