@@ -85,7 +85,7 @@ class WebinyCli {
                             const menu = new Menu();
                             menu.render();
                         }).catch(e => {
-                            Webiny.failure(e.message);
+                            Webiny.failure(e.message, e);
                         });
                     } catch (err) {
                         Webiny.exclamation('Setup failed with the following problem:', err);
