@@ -14,7 +14,7 @@
     "cli"
   ],
   "scripts": {
-    "postinstall": "./postinstall.js"
+    "postinstall": "node ./postinstall.js"
   },
   "main": "index.js",
   "dependencies": {

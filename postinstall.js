@@ -1,4 +1,3 @@
-#! /usr/bin/env node
 const username = require('username');
 const chalk = require('chalk');
 const Webiny = require('./lib/webiny');
