@@ -39,11 +39,11 @@ class WebinyCli {
         process.stdout.write('Loading plugins...');
         Webiny.getPlugins();
         readline.clearLine(process.stdout, 0);
-        readline.cursorTo(process.stdout, 0, null);   
+        readline.cursorTo(process.stdout, 0, null);
     }
 
     exit() {
-        if(this.updateAvailable) {
+        if (this.updateAvailable) {
             const {currentVersion, latestVersion} = this.updateAvailable;
             const line = '---------------------------------------------';
             Webiny.log('\n' + chalk.green(line));
@@ -51,6 +51,7 @@ class WebinyCli {
             Webiny.info('Run ' + chalk.blue('yarn add webiny-cli@' + latestVersion) + ' to update');
             Webiny.log(chalk.green(line) + '\n');
         }
+        process.exit(0);
     }
 
     run() {
@@ -111,17 +112,17 @@ class WebinyCli {
         }
     }
 
-    attachExitHandler(){
+    attachExitHandler() {
         if (process.platform === "win32") {
             const rl = require("readline").createInterface({
-              input: process.stdin,
-              output: process.stdout
+                input: process.stdin,
+                output: process.stdout
             });
-          
+
             rl.on("SIGINT", () => {
-              process.emit("SIGINT");
+                process.emit("SIGINT");
             });
-          }
+        }
 
         // Listen for process exit
         process.on('exit', this.exit.bind(this));
