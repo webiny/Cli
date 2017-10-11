@@ -1,3 +1,3 @@
 #! /usr/bin/env node
-const WebinyCli = require('..');
+const WebinyCli = require('./index');
 new WebinyCli().run();

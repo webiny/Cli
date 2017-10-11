@@ -13,6 +13,7 @@ const Webiny = require('./lib/webiny');
 class WebinyCli {
     constructor() {
         this.updateAvailable = null;
+        this.updateNotified = false;
         this.version = JSON.parse(Webiny.readFile(__dirname + '/package.json')).version;
 
         program
@@ -24,13 +25,31 @@ class WebinyCli {
                 '',
                 'Visit https://www.webiny.com/ for tutorials and documentation.'
             ].join('\n  '))
-            .option('--show-timestamps [format]', 'Show timestamps next to each console message')
-            .option('--env [env]', 'Setup project using specified environment (default or docker)');
+            .option('--show-timestamps [format]', 'Show timestamps next to each console message');
 
-        program.command('*', null, {noHelp: true}).action(cmd => {
-            Webiny.failure(`${chalk.magenta(cmd)} is not a valid command. Run ${chalk.magenta('webiny-cli -h')} to see all available commands.`);
-            process.exit(1);
-        });
+        program
+            .command('setup')
+            .description('Setup Webiny project.')
+            .option('--user [user]', 'Admin user email.')
+            .option('--password [password]', 'SSH connection string to the target server.')
+            .option('--url [url]', 'Project domain.') // https://github.com/tj/commander.js/issues/370
+            .option('--database [database]', 'Database name')
+            .action((cmd) => {
+                const config = cmd.opts();
+                config.domain = config.url;
+
+                setup(false, config).then(() => process.exit(0)).catch(e => {
+                    console.log(e.message);
+                    process.exit(1);
+                });
+            });
+
+        program
+            .command('*', null, {noHelp: true})
+            .action(cmd => {
+                Webiny.failure(`${chalk.magenta(cmd)} is not a valid command. Run ${chalk.magenta('webiny-cli -h')} to see all available commands.`);
+                process.exit(1);
+            });
 
         this.attachExitHandler();
 
@@ -43,7 +62,8 @@ class WebinyCli {
     }
 
     exit() {
-        if (this.updateAvailable) {
+        if (this.updateAvailable && !this.updateNotified) {
+            this.updateNotified = true;
             const {currentVersion, latestVersion} = this.updateAvailable;
             const line = '---------------------------------------------';
             Webiny.log('\n' + chalk.green(line));
@@ -73,42 +93,29 @@ class WebinyCli {
                 return menu.render();
             }
 
-            return inquirer.prompt([{
-                type: 'list',
-                name: 'env',
-                when: !program.env,
-                message: 'Select your development environment',
-                choices: [
-                    {name: 'Vagrant (or plain Linux/Mac)', value: 'default'},
-                    {name: 'Docker', value: 'docker'}
-                ]
-            }]).then(answers => {
-                const selectedEnv = answers.env || program.env;
-
-                try {
-                    if (selectedEnv !== 'docker') {
-                        // First run will check the system requirements and setup the platform
-                        Webiny.log('Checking requirements...');
-                        checkRequirements.requirements();
-                        Webiny.success("Great, all the requirements are in order!");
-                    }
-
-                    Webiny.log("\nSetting up the platform...");
-                    return setup(selectedEnv).then(answers => {
-                        Webiny.log(`\n-------------------------------------`);
-                        Webiny.success('Platform setup is now completed!');
-                        Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
-                        Webiny.log('-------------------------------------');
-                        const menu = new Menu();
-                        menu.render();
-                    }).catch(e => {
-                        Webiny.failure(e.message, e);
-                    });
-                } catch (err) {
-                    Webiny.exclamation('Setup failed with the following problem:', err);
-                    process.exit(1);
+            try {
+                // First run will check the system requirements and setup the platform
+                if (process.env.WEBINY_ENVIRONMENT !== 'docker') {
+                    Webiny.log('Checking requirements...');
+                    checkRequirements.requirements();
+                    Webiny.success("Great, all the requirements are in order!");
                 }
-            });
+
+                Webiny.log("\nSetting up the platform...");
+                return setup().then(answers => {
+                    Webiny.log(`\n-------------------------------------`);
+                    Webiny.success('Platform setup is now completed!');
+                    Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
+                    Webiny.log('-------------------------------------');
+                    const menu = new Menu();
+                    menu.render();
+                }).catch(e => {
+                    Webiny.failure(e.message, e);
+                });
+            } catch (err) {
+                Webiny.exclamation('Setup failed with the following problem:', err);
+                process.exit(1);
+            }
         }
     }
 
@@ -133,3 +140,5 @@ class WebinyCli {
 }
 
 module.exports = WebinyCli;
+
+// cli setup --user pavel@docker.app --password dev --url http://docker.app:8000 --database Webiny --databasePort 8010
