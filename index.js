@@ -140,5 +140,3 @@ class WebinyCli {
 }
 
 module.exports = WebinyCli;
-
-// cli setup --user pavel@docker.app --password dev --url http://docker.app:8000 --database Webiny --databasePort 8010
