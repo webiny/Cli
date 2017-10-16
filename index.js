@@ -2,18 +2,15 @@
 const program = require('commander');
 const _ = require('lodash');
 const chalk = require('chalk');
-const inquirer = require('inquirer');
 const readline = require('readline');
 
 const checkUpdates = require('./lib/boot/checkUpdates');
 const setup = require('./lib/boot/setup');
-const Menu = require('./lib/navigation');
 const Webiny = require('./lib/webiny');
 
 class WebinyCli {
     constructor() {
         this.updateAvailable = null;
-        this.updateNotified = false;
         this.version = JSON.parse(Webiny.readFile(__dirname + '/package.json')).version;
 
         program
@@ -31,7 +28,7 @@ class WebinyCli {
             .command('setup')
             .description('Setup Webiny project.')
             .option('--user [user]', 'Admin user email.')
-            .option('--password [password]', 'SSH connection string to the target server.')
+            .option('--password [password]', 'Admin user password.')
             .option('--url [url]', 'Project domain.') // https://github.com/tj/commander.js/issues/370
             .option('--database [database]', 'Database name')
             .action((cmd) => {
@@ -62,8 +59,7 @@ class WebinyCli {
     }
 
     exit() {
-        if (this.updateAvailable && !this.updateNotified) {
-            this.updateNotified = true;
+        if (this.updateAvailable) {
             const {currentVersion, latestVersion} = this.updateAvailable;
             const line = '---------------------------------------------';
             Webiny.log('\n' + chalk.green(line));
@@ -71,7 +67,6 @@ class WebinyCli {
             Webiny.info('Run ' + chalk.blue('yarn add webiny-cli@' + latestVersion) + ' to update');
             Webiny.log(chalk.green(line) + '\n');
         }
-        process.exit(0);
     }
 
     run() {
@@ -89,8 +84,7 @@ class WebinyCli {
             Webiny.log('---------------------------------------------');
             const checkRequirements = require('./lib/boot/checkRequirements');
             if (!checkRequirements.firstRun()) {
-                const menu = new Menu();
-                return menu.render();
+                return Webiny.renderMenu();
             }
 
             try {
@@ -107,8 +101,7 @@ class WebinyCli {
                     Webiny.success('Platform setup is now completed!');
                     Webiny.info(`You are now ready to run your first development build! Select "Develop!" from the menu and hit ENTER.\nAfter the development build is completed, navigate to ` + chalk.magenta(answers.domain + '/admin') + ` to see your brand new administration system!`);
                     Webiny.log('-------------------------------------');
-                    const menu = new Menu();
-                    menu.render();
+                    Webiny.renderMenu();
                 }).catch(e => {
                     Webiny.failure(e.message, e);
                 });
@@ -135,7 +128,9 @@ class WebinyCli {
         process.on('exit', this.exit.bind(this));
 
         // Ctrl+C event
-        process.on('SIGINT', this.exit.bind(this));
+        process.on('SIGINT', () => {
+            process.exit(0);
+        });
     }
 }
 
