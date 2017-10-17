@@ -31,6 +31,7 @@ class WebinyCli {
             .option('--password [password]', 'Admin user password.')
             .option('--url [url]', 'Project domain.') // https://github.com/tj/commander.js/issues/370
             .option('--database [database]', 'Database name')
+            .option('--cliPort [cliPort]', 'CLI port')
             .action((cmd) => {
                 const config = cmd.opts();
                 config.domain = config.url;
