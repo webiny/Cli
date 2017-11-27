@@ -1,26 +1,25 @@
 Webiny CLI
 ----------
 
-This is a command line interface tool to manage your Webiny platform setup, run builds, watch code for changes and deploy
-your setup to remote servers.
+This is a plugginable cli tool to develop and manage a Webiny project.
 
-Webiny Platform can be installed on your main OS, as well as Docker and Vagrant.
+Get our [Webiny Installer](https://www.webiny.com/download) to quickly setup a Webiny project and begin developing.
 
-## How to use
-In your project folder run the following commands:
+## Manual installation (not really recommended)
+In your project folder...
 ```
-// Installation using yarn
 yarn add webiny-cli
-
-// Installation using npm
-npm i webiny-cli
-
-// Run CLI tool
-webiny-cli
 ```
-... and follow the on-screen instructions.
 
-## Docker and Vagrant
-Here are the links to our step-by-step tutorials on installing Webiny Platform using [Docker](https://www.webiny.com/hub/tutorials/installing-webiny-with-docker) and [Vagrant](https://www.webiny.com/hub/tutorials/installing-webiny-on-vagrant).
- 
-Read about Webiny at [http://www.webiny.com](http://www.webiny.com).
+Now run the `webiny-cli` using one of the following approaches:
+
+1) Run the cli using a binary in `node_modules/.bin` 
+2) Run by adding a script to your `package.json` and simply `yarn webiny-cli` to get started:
+
+```
+{
+    "scripts": {
+        "webiny-cli": "node node_modules/webiny-cli/bin/webiny-cli.js"
+    }
+}
+```
